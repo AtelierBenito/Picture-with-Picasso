@@ -1,0 +1,620 @@
+{
+  "_documentation": {
+    "description": "Standalone Kling O1 nodes for manual insertion into Picture with Picasso v2.4 workflow",
+    "version": "v1.0-2026-01-08",
+    "targetWorkflow": "Picture with Picasso -Wan 2.5-v2.4.json",
+    "prompt": "See source/prompts/source-prompts-Kling_O1_Video_Prompt-v1.0-2026_01_08.md"
+  },
+  "_insertionPoint": {
+    "description": "Where new nodes connect FROM (input sources)",
+    "connectFrom": [
+      {
+        "nodeName": "Convert User Image to Base64",
+        "nodeId": "1f11a417-39c6-40ef-b68e-c868cdd0f226",
+        "outputField": "userImageBase64",
+        "connectTo": "Prepare Kling Elements"
+      },
+      {
+        "nodeName": "Convert Picasso Image to Base64",
+        "nodeId": "87446f7f-cc49-45ce-8261-14ffb5875ea9",
+        "outputField": "picassoImageBase64",
+        "connectTo": "Prepare Kling Elements"
+      }
+    ],
+    "note": "Both Base64 nodes currently connect to 'Merge Images for Reve'. Redirect them to 'Prepare Kling Elements' instead."
+  },
+  "_exitPoint": {
+    "description": "Where new nodes connect TO (output destinations)",
+    "connectTo": [
+      {
+        "nodeName": "Archive Video to Google Drive",
+        "nodeId": "c0b9321d-be63-4e41-8cd4-5bbf190839cf",
+        "connectFrom": "Get Kling Result",
+        "note": "Receives video binary data for archiving"
+      },
+      {
+        "nodeName": "Route Output",
+        "nodeId": "a862b8a9-22f1-494a-9738-d25eda420867",
+        "connectFrom": "Get Kling Result",
+        "note": "Routes to Telegram or Email based on inputSource"
+      }
+    ]
+  },
+  "_nodesToRemove": {
+    "description": "Nodes to DELETE from v2.4 workflow before inserting new nodes",
+    "nodes": [
+      {"name": "Merge Images for Reve", "id": "bf48af0c-1dff-447d-ae18-a0e1e760183b"},
+      {"name": "Send to Reve Remix", "id": "a2ca9aae-ac85-4233-8f82-0d9132c29117"},
+      {"name": "Check Reve Status", "id": "ad4c3c69-807f-485c-b102-6365c5cbf368"},
+      {"name": "Check Reve Complete", "id": "f3533944-d0d8-4e8f-80e9-5bea075b6477"},
+      {"name": "Wait for Reve", "id": "00a70002-9632-4244-8183-747222a96dd5"},
+      {"name": "Download Composed Image", "id": "d7f1063b-bc6a-43c1-b7ba-fb649ea213ee"},
+      {"name": "Upload Composed Image to Cloudinary", "id": "7d35077f-b2e7-483c-aa45-4a27579f5c25"},
+      {"name": "Archive Composed Image to Drive", "id": "02513ee7-5d42-459a-8401-59aa0192a1fd", "note": "Optional - no longer needed without composed image"},
+      {"name": "Prepare Video Prompt", "id": "b4e9f649-28e3-4a8e-880b-51af617fef46"},
+      {"name": "Create Video Request", "id": "792af95e-9fe1-4fc5-b178-cc90b9aa08dc"},
+      {"name": "Get Videos", "id": "6c50a923-ea4e-4c9a-a5fd-f13b86032916"},
+      {"name": "If", "id": "93404b14-c0cf-4977-8fd5-eb5dcefa39ff"},
+      {"name": "Wait", "id": "14946e06-976c-44e0-8a8e-82365bb38e08"}
+    ],
+    "totalCount": 13
+  },
+  "_configurationRequired": {
+    "description": "Values that need to be set before using",
+    "items": [
+      {
+        "field": "FAL_KEY",
+        "location": "Workflow Configuration node or environment variable",
+        "note": "Your fal.ai API key"
+      }
+    ]
+  },
+  "nodes": [
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "kling-elements",
+              "name": "elements",
+              "value": "={{ [\n  {\n    \"reference_image_urls\": [$('Convert User Image to Base64').item.json.userImageBase64],\n    \"frontal_image_url\": $('Convert User Image to Base64').item.json.userImageBase64\n  },\n  {\n    \"reference_image_urls\": [$('Convert Picasso Image to Base64').item.json.picassoImageBase64],\n    \"frontal_image_url\": $('Convert Picasso Image to Base64').item.json.picassoImageBase64\n  }\n] }}",
+              "type": "array"
+            },
+            {
+              "id": "kling-prompt",
+              "name": "prompt",
+              "value": "@Element1 (visitors) and @Element2 (Picasso) are close friends joyfully chumming around together.\n\nVISUAL STYLE:\n- Tone, coloring, texture, and focus derived from @Element2 reference image\n- Lighting matches the source image - warmth, direction, mood\n- Environment authentic to the context shown in the Picasso reference\n\nPOSITIONING:\n- Positioned near each other, naturally placed within the scene\n- Comfortable, friendly interaction and body language\n- All characters clearly visible within frame\n\nINTERACTION:\n- Genuine friendship energy - animated conversation, shared laughter\n- Affectionately calling each other \"talented scoundrels\" or other endearing, playful banter of Picasso's era\n- Expressive gestures, warm eye contact, natural reactions\n- Ambient sounds of the environment\n\nCAMERA:\n- Subtle, naturalistic movement that feels personal and intimate\n- Gentle push in toward the subjects, or slow drift around the group\n- Movement that draws viewer into the moment\n\nTECHNICAL:\n- Maintain exact likeness of all people throughout\n- Natural human proportions, no duplicated limbs or distorted anatomy\n- Smooth, cinematic motion\n- 9:16 aspect ratio (vertical, social media native)\n- 10 second duration",
+              "type": "string"
+            },
+            {
+              "id": "kling-duration",
+              "name": "duration",
+              "value": "10",
+              "type": "string"
+            },
+            {
+              "id": "kling-aspect-ratio",
+              "name": "aspect_ratio",
+              "value": "9:16",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2500,
+        576
+      ],
+      "id": "kling-prepare-elements",
+      "name": "Prepare Kling Elements"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/kling-video/o1/reference-to-video",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Key {{ $('Workflow Configuration').item.json.falApiKey }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  \"prompt\": $json.prompt,\n  \"elements\": $json.elements,\n  \"duration\": $json.duration,\n  \"aspect_ratio\": $json.aspect_ratio\n}) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2276,
+        576
+      ],
+      "id": "kling-submit",
+      "name": "Submit to Kling"
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "retry-count",
+              "name": "retryCount",
+              "value": "0",
+              "type": "number"
+            },
+            {
+              "id": "request-id",
+              "name": "request_id",
+              "value": "={{ $json.request_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2052,
+        576
+      ],
+      "id": "kling-init-retry",
+      "name": "Initialize Retry Counter"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'https://queue.fal.run/fal-ai/kling-video/o1/reference-to-video/requests/' + $json.request_id + '/status' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Key {{ $('Workflow Configuration').item.json.falApiKey }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1828,
+        576
+      ],
+      "id": "kling-check-status",
+      "name": "Check Kling Status"
+    },
+    {
+      "parameters": {
+        "mode": "rules",
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "COMPLETED",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "COMPLETED"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "FAILED",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "FAILED"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "IN_QUEUE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PENDING"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "IN_PROGRESS",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PENDING"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1604,
+        576
+      ],
+      "id": "kling-status-router",
+      "name": "Status Router"
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'https://queue.fal.run/fal-ai/kling-video/o1/reference-to-video/requests/' + $json.request_id }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Key {{ $('Workflow Configuration').item.json.falApiKey }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1380,
+        384
+      ],
+      "id": "kling-get-result",
+      "name": "Get Kling Result",
+      "_outputNote": "Output: $json.video.url contains the video URL. Connect to Archive Video and Route Output."
+    },
+    {
+      "parameters": {
+        "mode": "manual",
+        "duplicateItem": false,
+        "assignments": {
+          "assignments": [
+            {
+              "id": "increment-retry",
+              "name": "retryCount",
+              "value": "={{ $json.retryCount + 1 }}",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1380,
+        768
+      ],
+      "id": "kling-increment-retry",
+      "name": "Increment Retry Counter"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "max-retry-check",
+              "leftValue": "={{ $json.retryCount }}",
+              "rightValue": "30",
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1156,
+        768
+      ],
+      "id": "kling-check-max-retries",
+      "name": "Check Max Retries",
+      "_outputNote": "TRUE = Max retries exceeded (timeout). FALSE = Continue polling."
+    },
+    {
+      "parameters": {
+        "resume": "timeInterval",
+        "amount": 20,
+        "unit": "seconds"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -932,
+        864
+      ],
+      "id": "kling-wait",
+      "name": "Wait for Kling",
+      "_connectionNote": "Output connects back to Check Kling Status node for polling loop"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Get Kling Result').item.json.video.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "data"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1156,
+        384
+      ],
+      "id": "kling-download-video",
+      "name": "Download Kling Video",
+      "_outputNote": "Downloads video binary. Connect to Archive Video to Google Drive and Route Output."
+    }
+  ],
+  "connections": {
+    "Prepare Kling Elements": {
+      "main": [
+        [
+          {
+            "node": "Submit to Kling",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Submit to Kling": {
+      "main": [
+        [
+          {
+            "node": "Initialize Retry Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Initialize Retry Counter": {
+      "main": [
+        [
+          {
+            "node": "Check Kling Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Kling Status": {
+      "main": [
+        [
+          {
+            "node": "Status Router",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status Router": {
+      "main": [
+        [
+          {
+            "node": "Get Kling Result",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Increment Retry Counter",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Increment Retry Counter",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Increment Retry Counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ],
+      "_outputMapping": {
+        "0": "COMPLETED -> Get Kling Result",
+        "1": "FAILED -> Increment Retry Counter (consider adding error handling)",
+        "2": "PENDING (IN_QUEUE) -> Increment Retry Counter",
+        "3": "PENDING (IN_PROGRESS) -> Increment Retry Counter"
+      }
+    },
+    "Get Kling Result": {
+      "main": [
+        [
+          {
+            "node": "Download Kling Video",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Retry Counter": {
+      "main": [
+        [
+          {
+            "node": "Check Max Retries",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Max Retries": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait for Kling",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ],
+      "_outputMapping": {
+        "0": "TRUE (max retries exceeded) -> Add error handling node",
+        "1": "FALSE (continue) -> Wait for Kling"
+      }
+    },
+    "Wait for Kling": {
+      "main": [
+        [
+          {
+            "node": "Check Kling Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Kling Video": {
+      "main": [
+        []
+      ],
+      "_outputMapping": {
+        "0": "Connect to: Archive Video to Google Drive AND Route Output"
+      }
+    }
+  },
+  "_manualConnectionsRequired": {
+    "description": "Connections you must make manually after importing nodes",
+    "connections": [
+      {
+        "from": "Convert User Image to Base64",
+        "to": "Prepare Kling Elements",
+        "note": "Disconnect from Merge Images for Reve, connect to Prepare Kling Elements"
+      },
+      {
+        "from": "Convert Picasso Image to Base64",
+        "to": "Prepare Kling Elements",
+        "note": "Disconnect from Merge Images for Reve, connect to Prepare Kling Elements"
+      },
+      {
+        "from": "Download Kling Video",
+        "to": "Archive Video to Google Drive",
+        "note": "New exit connection"
+      },
+      {
+        "from": "Download Kling Video",
+        "to": "Route Output",
+        "note": "New exit connection for Telegram/Email delivery"
+      },
+      {
+        "from": "Check Max Retries (TRUE output)",
+        "to": "Error handling node",
+        "note": "Optional: Add error notification when max retries exceeded"
+      }
+    ]
+  }
+}
