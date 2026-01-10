@@ -2,7 +2,7 @@
 
 <!-- structure-version: 1.7 -->
 
-**Last Updated:** 2026-01-06
+**Last Updated:** 2026-01-08
 
 ## Project Overview
 
@@ -33,6 +33,12 @@ Picture with Picasso/
         research/                       # Background research
         schemas/                        # Data structures
         templates/                      # Reusable patterns
+        Bug Tracker/                    # Issue and problem tracking
+            issues/open/                # Active issues
+            issues/resolved/            # Fixed issues
+            problems/active/            # Active problems
+            problems/resolved/          # Solved problems
+            templates/                  # Issue/problem templates
 
     versions/                           # HISTORICAL
         ARCHIVE-LOG.md                  # Archive index
@@ -78,4 +84,5 @@ Picture with Picasso/
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2026-01-08 | 1.1 | Added Bug Tracker structure via project-setup |
 | 2026-01-06 | 1.0 | Initial CLAUDE.md created via project-migrate |

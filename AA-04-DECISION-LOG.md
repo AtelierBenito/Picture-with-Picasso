@@ -1,7 +1,88 @@
 # Decision Log
 
 **Project:** Picture with Picasso
-**Last Updated:** 2026-01-08
+**Last Updated:** 2026-01-09
+
+---
+
+## 2026-01-09
+
+### Decision: Kling O1 reference-to-video Does Not Support Audio
+
+**Category:** Technical / API Investigation
+**Decision:** Confirmed that `fal-ai/kling-video/o1/reference-to-video` endpoint does NOT support `generate_audio` parameter
+**Rationale:**
+- Scraped fal.ai API documentation - `generate_audio` not in input schema
+- Parameter is silently ignored when sent
+- Audio generation only exists on Kling 2.6 endpoints
+**Evidence:**
+- Workflow Q2Z6nJYPotQnhlwj includes `generate_audio: true` - confirmed via n8n MCP
+- Execution 3984 produced video without audio despite parameter
+- API docs show no `generate_audio` for reference-to-video endpoint
+**Impact:** Major - need alternative approach for audio capability
+**Status:** Confirmed - this is an API limitation, not a bug
+
+---
+
+### Decision: Explore 2-Step Pipeline Architecture
+
+**Category:** Technical / Architecture Research
+**Decision:** Research image composition → Kling 2.6 as potential solution
+**Rationale:**
+- Kling 2.6 I2V has `generate_audio: true` and it works
+- But Kling 2.6 has no `elements` array for multi-identity
+- Composition step could combine identities first
+**Options Researched:**
+- Reve Remix (`fal-ai/reve/remix`) - 1-6 images
+- FLUX.2 Pro Edit - up to 9 images
+- FLUX.1 Kontext Max Multi - experimental
+**Trade-off:** Risk of Picasso identity loss during composition
+**Status:** Research complete, awaiting user decision
+
+---
+
+### Decision: Prompt v1.5 Character Limit Fix
+
+**Category:** Technical / Prompt Engineering
+**Decision:** Reduce prompt from ~5,600 to ~2,150 characters (under 2,500 API limit)
+**Rationale:**
+- Execution 3981 failed: `422 - ensure this value has at most 2500 characters`
+- Consolidated verbose sections, moved prohibitions to negative prompt
+**What Was Removed:**
+- Entire DO NOT section (moved to negative prompt)
+- Verbose if/then structures
+- Separate PICASSO/VISITORS subsections
+**What Was Preserved:**
+- Core narrative, @Element2 as visual master, identity preservation
+- Audio generation instructions (even though API ignores them)
+- All technical specifications
+**Impact:** Prompt now fits API limit
+**Implemented:** Yes - v1.5 created
+
+---
+
+## 2026-01-08 (Evening)
+
+### Decision: Negative Prompt Content for Kling O1
+
+**Category:** Technical / Quality Control
+**Decision:** Implement 8-item negative prompt for identity preservation and quality control
+**Content:**
+```
+face morphing, identity swap, duplicated limbs, extra limbs, distorted anatomy, unnatural proportions, changing background, motion blur
+```
+**Rationale:**
+- Identity items (face morphing, identity swap) - Kling O1 best practices for multi-element videos
+- Anatomical items (duplicated limbs, extra limbs, distorted anatomy) - Proven controls from v2.4 Reve Remix
+- Proportions (unnatural proportions) - Maintains realistic sizing per v2.4 5'4" reference
+- Environment (changing background) - User requirement for scene consistency
+- Quality (motion blur) - Video quality control from v2.4
+**Sources:**
+- v2.4 Reve Remix prompt quality controls
+- Kling O1 documentation best practices
+- User requirements
+**Impact:** Better identity preservation and quality control in generated videos
+**Implemented:** Yes - added to node JSON v1.1
 
 ---
 

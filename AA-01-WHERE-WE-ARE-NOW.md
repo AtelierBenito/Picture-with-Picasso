@@ -1,54 +1,55 @@
 # Where We Are Now - Quick Reference
 
-**Last Updated:** 2026-01-08
-**Current Version:** v2.4 (production) → v3.0 (ready for implementation)
+**Last Updated:** 2026-01-09
+**Current Version:** v3.0 (workflow rewired, audio issue identified)
 
 ---
 
 ## Essential Reading for Next Session
 
 1. **This file (AA-01)** - YOU ARE HERE
-2. **AA-02-SESSION-SUMMARY-LATEST.md** - 2026-01-08 session details
+2. **AA-02-SESSION-SUMMARY-LATEST.md** - 2026-01-09 session details
 3. **AA-03-NEXT-STEPS.md** - Prioritized action items
 
 ---
 
 ## Current State
 
-### v3.0 Migration Status: READY FOR IMPLEMENTATION
+### CRITICAL FINDING: Kling O1 Does NOT Support Audio
 
-All v3.0 artifacts are complete and validated:
+**Root Cause Identified (2026-01-09):**
+- The `fal-ai/kling-video/o1/reference-to-video` endpoint does NOT have `generate_audio` in its input schema
+- The parameter is **silently ignored** when sent
+- Audio generation only exists on Kling 2.6 endpoints
 
-| Artifact | Status | Location |
-|----------|--------|----------|
-| Video Prompt | ✅ Finalized | `source/prompts/source-prompts-Kling_O1_Video_Prompt-v1.0-2026_01_08.md` |
-| Node Insert JSON | ✅ Validated | `source/workflows/source-workflows-Kling_O1_Nodes_Insert-v1.0-2026_01_08.json` |
-| Configuration | ✅ Complete | `source/components/source-components-Kling_O1_v3.0_Configuration-v1.0-2026_01_08.md` |
-| Implementation Guide | ✅ Complete | `docs/guides/docs-guides-Kling_O1_v3.0_Implementation_Guide-v1.0-2026_01_08.md` |
-| Changelog | ✅ Complete | `docs/changelogs/docs-changelogs-Changelog_v2.4_to_v3.0-v1.0-2026_01_08.md` |
+**Trade-off:**
+| Endpoint | Identity (elements array) | Audio |
+|----------|--------------------------|-------|
+| Kling O1 reference-to-video | Yes (90-95%) | None |
+| Kling 2.6 image-to-video | No | Yes |
 
-### Key Changes in v3.0
+### Prompt Status
 
-| Aspect | v2.4 | v3.0 |
-|--------|------|------|
-| API Stack | Reve Remix + Kie.ai | Kling O1 (fal.ai) |
-| Architecture | Two-stage (image + video) | Single-stage (direct video) |
-| Aspect Ratio | 16:9 | 9:16 (social native) |
-| Duration | Variable | 10 seconds |
+| Version | Status | Character Count |
+|---------|--------|-----------------|
+| v1.0-v1.4 | Superseded | Exceeded 2,500 limit |
+| **v1.5** | **CURRENT** | ~2,150 (under 2,500) |
+
+Current prompt: `source/prompts/source-prompts-Kling_O1_Video_Prompt-v1.5-2026_01_09.md`
 
 ---
 
 ## What's Next
 
-**IMMEDIATE ACTION:** Manual node insertion in n8n
+**DECISION REQUIRED:** Choose architecture direction
 
-1. Backup v2.4 workflow
-2. Remove 13 old nodes (listed in changelog)
-3. Insert 10 new nodes from JSON file
-4. Connect insertion/exit points
-5. Test end-to-end
+| Option | Pros | Cons |
+|--------|------|------|
+| A: Accept no audio | Best identity preservation | No audio |
+| B: 2-step pipeline | Audio + identity possible | Complex, identity risk |
+| C: Different model | May have both | Migration effort |
 
-See: `docs/guides/docs-guides-Kling_O1_v3.0_Implementation_Guide-v1.0-2026_01_08.md`
+See AA-03 for detailed options.
 
 ---
 
@@ -58,15 +59,18 @@ See: `docs/guides/docs-guides-Kling_O1_v3.0_Implementation_Guide-v1.0-2026_01_08
 - **Active Workflow:** `source/workflows/Picture with Picasso -Wan 2.5-v2.4.json`
 - **n8n Cloud ID:** `C22rlgmTijUZsUSb`
 
-### v3.0 Migration
-- **Node Insert JSON:** `source/workflows/source-workflows-Kling_O1_Nodes_Insert-v1.0-2026_01_08.json`
-- **Video Prompt:** `source/prompts/source-prompts-Kling_O1_Video_Prompt-v1.0-2026_01_08.md`
-- **Full Configuration:** `source/components/source-components-Kling_O1_v3.0_Configuration-v1.0-2026_01_08.md`
+### v3.0 Development
+- **Development Workflow:** `v3-v2.4` (duplicate of v2.4)
+- **n8n Cloud ID:** `Q2Z6nJYPotQnhlwj`
+- **Status:** REWIRED - Functional but NO AUDIO (API limitation)
 
-### Documentation
-- **Implementation Guide:** `docs/guides/docs-guides-Kling_O1_v3.0_Implementation_Guide-v1.0-2026_01_08.md`
-- **Changelog:** `docs/changelogs/docs-changelogs-Changelog_v2.4_to_v3.0-v1.0-2026_01_08.md`
-- **Background Research:** `docs/research/docs-research-Kling_O1_Background_Analysis-v1.0-2026_01_08.md`
+### Current Prompt (v1.5)
+- **Location:** `source/prompts/source-prompts-Kling_O1_Video_Prompt-v1.5-2026_01_09.md`
+- **Character count:** ~2,150 (under 2,500 limit)
+
+### Configuration
+- **JSON Body:** `source/components/source-components-Submit_to_Kling_JSON_Body-v1.4-2026_01_09.md`
+- **Full Config:** `source/components/source-components-Kling_O1_v3.0_Configuration-v1.0-2026_01_08.md`
 
 ---
 
@@ -74,10 +78,11 @@ See: `docs/guides/docs-guides-Kling_O1_v3.0_Implementation_Guide-v1.0-2026_01_08
 
 | Date | Focus | Key Outcome |
 |------|-------|-------------|
-| 2026-01-08 | Kling O1 v3.0 finalization | All artifacts created, validated, documented |
+| 2026-01-09 | Audio issue root cause | Kling O1 does NOT support audio (API limitation) |
+| 2026-01-08 (Evening) | Negative prompt, workflow verification | v1.1 nodes, structure verified |
+| 2026-01-08 | Kling O1 v3.0 finalization | All artifacts created |
 | 2026-01-06 | v3.0 migration planning | Implementation plan created |
-| 2025-11-30 | v2.1 routing fix | Route BEFORE download architecture |
 
 ---
 
-*Next session: Start with AA-03 for prioritized tasks*
+*Next session: Read AA-03 for decision options*

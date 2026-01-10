@@ -80,6 +80,24 @@ This document contains all configuration details for the Kling O1 integration in
 |-----------|-------|-----------|
 | `duration` | `10` | 10 seconds for meaningful interaction, social media native |
 | `aspect_ratio` | `9:16` | Vertical format for TikTok, Instagram Reels, Stories |
+| `negative_prompt` | See below | Quality control derived from v2.4 + best practices |
+
+### Negative Prompt
+
+```
+face morphing, identity swap, duplicated limbs, extra limbs, distorted anatomy, unnatural proportions, changing background, motion blur
+```
+
+| Item | Source | Purpose |
+|------|--------|---------|
+| `face morphing` | Kling O1 best practices | Prevents gradual face changes during video |
+| `identity swap` | User requirement | Keeps @Element1 and @Element2 distinct |
+| `duplicated limbs` | v2.4 Reve prompt | Proven quality control from production |
+| `extra limbs` | v2.4 Reve prompt | Reinforces limb integrity in multi-person scenes |
+| `distorted anatomy` | v2.4 Reve prompt | Maintains realistic body proportions |
+| `unnatural proportions` | v2.4 scaling reference | Maintains realistic sizing |
+| `changing background` | User requirement | Environment consistency throughout video |
+| `motion blur` | v2.4 Reve prompt | Video quality control |
 
 ### @Element References
 

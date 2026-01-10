@@ -1,9 +1,10 @@
 {
   "_documentation": {
     "description": "Standalone Kling O1 nodes for manual insertion into Picture with Picasso v2.4 workflow",
-    "version": "v1.0-2026-01-08",
+    "version": "v1.1-2026-01-08",
     "targetWorkflow": "Picture with Picasso -Wan 2.5-v2.4.json",
-    "prompt": "See source/prompts/source-prompts-Kling_O1_Video_Prompt-v1.0-2026_01_08.md"
+    "prompt": "See source/prompts/source-prompts-Kling_O1_Video_Prompt-v1.0-2026_01_08.md",
+    "changelog_v1.1": "Added negative_prompt parameter to Prepare Kling Elements and Submit to Kling nodes"
   },
   "_insertionPoint": {
     "description": "Where new nodes connect FROM (input sources)",
@@ -99,6 +100,12 @@
               "name": "aspect_ratio",
               "value": "9:16",
               "type": "string"
+            },
+            {
+              "id": "kling-negative-prompt",
+              "name": "negative_prompt",
+              "value": "face morphing, identity swap, duplicated limbs, extra limbs, distorted anatomy, unnatural proportions, changing background, motion blur",
+              "type": "string"
             }
           ]
         },
@@ -135,7 +142,7 @@
         },
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({\n  \"prompt\": $json.prompt,\n  \"elements\": $json.elements,\n  \"duration\": $json.duration,\n  \"aspect_ratio\": $json.aspect_ratio\n}) }}",
+        "jsonBody": "={{ JSON.stringify({\n  \"prompt\": $json.prompt,\n  \"negative_prompt\": $json.negative_prompt,\n  \"elements\": $json.elements,\n  \"duration\": $json.duration,\n  \"aspect_ratio\": $json.aspect_ratio\n}) }}",
         "options": {
           "timeout": 120000
         }
