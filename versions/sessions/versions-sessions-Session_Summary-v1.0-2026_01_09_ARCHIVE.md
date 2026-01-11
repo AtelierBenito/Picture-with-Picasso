@@ -1,56 +1,147 @@
-# Session Summary - 2026-01-08 (Evening) - ARCHIVED
-
-**Archived:** 2026-01-09
-**Reason:** New session started
-
----
+# Session Summary - 2026-01-09
 
 ## Session Overview
 
-**Date:** 2026-01-08
-**Duration:** ~2 hours
-**Focus:** Negative prompt research, node JSON versioning, workflow structure verification
+**Date:** 2026-01-09
+**Duration:** ~3 hours
+**Focus:** Kling O1 audio issue root cause analysis, alternative architecture research
 
 ---
 
 ## Accomplishments
 
-### 1. Negative Prompt Research & Implementation
-- Researched optimal negative prompts for Kling O1 using sequential thinking
-- Synthesized v2.4 Reve Remix quality controls with Kling O1 best practices
-- Created comprehensive negative prompt (8 items):
-  ```
-  face morphing, identity swap, duplicated limbs, extra limbs, distorted anatomy, unnatural proportions, changing background, motion blur
-  ```
-- Added `negative_prompt` parameter to Prepare Kling Elements and Submit to Kling nodes
+### 1. ROOT CAUSE IDENTIFIED: Kling O1 Audio Not Supported
 
-### 2. Node Insert JSON Versioned to v1.1
-- Updated JSON file from v1.0 to v1.1
-- Added negative_prompt field to Prepare Kling Elements node
-- Updated Submit to Kling jsonBody to include negative_prompt
-- Renamed file: `source-workflows-Kling_O1_Nodes_Insert-v1.1-2026_01_08.json`
+**Critical Discovery:** The `fal-ai/kling-video/o1/reference-to-video` endpoint does NOT support the `generate_audio` parameter.
 
-### 3. Documentation Updates
-- Updated v3.0 Configuration with negative prompt section
-- Updated Video Prompt document with negative prompt details
-- Updated Changelog with negative prompt as v3.0 addition
-- Updated all file references from v1.0 to v1.1
+- Verified workflow Q2Z6nJYPotQnhlwj DOES include `generate_audio: true`
+- Scraped fal.ai API documentation and found `generate_audio` is NOT in the input schema for this endpoint
+- The parameter is **silently ignored** - no error returned
+- Audio generation only exists on Kling 2.6 endpoints (e.g., `fal-ai/kling-video/v2.6/pro/image-to-video`)
 
-### 4. Workflow Structure Verification (via n8n MCP)
-- User completed node rewiring in n8n workflow Q2Z6nJYPotQnhlwj
-- First verification: Found missing connection and old nodes present
-- Second verification: All issues resolved
-  - Convert User Image to Base64 → Prepare Kling Elements1 ✅
-  - Convert Picasso Image to Base64 → Prepare Kling Elements1 ✅
-  - Download Kling Video1 → Archive + Route Output (parallel) ✅
-  - 13 old v2.4 nodes removed ✅
-  - Node count: 38 (down from 51)
+**This is an API limitation, not a bug.**
 
-### 5. Clarified Audio Capability
-- Confirmed Kling O1 DOES support native audio generation
-- Parameter: `generate_audio` (default: true)
-- Uses Kling-Foley technology for frame-synchronized audio
+### 2. Deep Research Conducted
+
+Used multiple sources:
+- Perplexity research on Kling O1 audio issues
+- Firecrawl scraping of fal.ai API documentation
+- GitHub issues search
+- Web search for workarounds
+
+**Findings:**
+- Audio issues are documented as "inconsistent" in Kling O1
+- Community reports similar problems
+- No workaround exists for reference-to-video endpoint
+
+### 3. Trade-off Analysis Completed
+
+| Model | Identity Preservation | Audio Support |
+|-------|----------------------|---------------|
+| Kling O1 (reference-to-video) | 90-95% (elements array) | None |
+| Kling 2.6 (image-to-video) | Limited (single image) | Yes |
+| Veo 3 | Good | Excellent |
+| Sora 2 | Good | Excellent |
+| Hailuo 2.3 | 70-80% | Good |
+
+### 4. Prompt Evolution (v1.1 → v1.5)
+
+Created multiple prompt versions to address issues:
+
+| Version | Focus |
+|---------|-------|
+| v1.1 | Audio enhancement |
+| v1.2 | Height reinforcement (5'4" Picasso) |
+| v1.3 | Identity preservation, lip sync |
+| v1.4 | Visual master section, DO NOT section |
+| v1.5 | **Character limit fix** (~5,600 → ~2,150 chars, under 2,500 API limit) |
+
+Root cause of execution 3981 failure: `422 - ensure this value has at most 2500 characters`
+
+### 5. Alternative Architecture Explored
+
+Researched 2-step pipeline for both identity AND audio:
+
+**Proposed Pipeline:**
+```
+Step 1: Image Composition (Reve Remix or FLUX.2)
+        → Combine user + Picasso into single composite
+
+Step 2: Video Generation (Kling 2.6 Pro I2V)
+        → Generate video WITH audio from composite
+```
+
+**Image Composition Options Researched:**
+- Reve Remix (`fal-ai/reve/remix`) - 1-6 images, `<img>0</img>` syntax
+- FLUX.2 Pro Edit (`fal-ai/flux-2-pro/edit`) - up to 9 images
+- FLUX.1 Kontext Max Multi - experimental
+
+**Challenge:** Famous person (Picasso) identity preservation in composition step
 
 ---
 
-*Session closed: 2026-01-08 22:45*
+## Files Created This Session
+
+| File | Purpose |
+|------|---------|
+| `source/prompts/source-prompts-Kling_O1_Video_Prompt-v1.1-2026_01_09.md` | Audio enhancement |
+| `source/prompts/source-prompts-Kling_O1_Video_Prompt-v1.2-2026_01_09.md` | Height reinforcement |
+| `source/prompts/source-prompts-Kling_O1_Video_Prompt-v1.3-2026_01_09.md` | Identity + lip sync |
+| `source/prompts/source-prompts-Kling_O1_Video_Prompt-v1.4-2026_01_09.md` | Visual master restructure |
+| `source/prompts/source-prompts-Kling_O1_Video_Prompt-v1.5-2026_01_09.md` | Character limit fix (CURRENT) |
+| `source/components/source-components-Submit_to_Kling_JSON_Body-v1.4-2026_01_09.md` | Updated JSON body config |
+
+---
+
+## Files Archived This Session
+
+| File | Destination | Reason |
+|------|-------------|--------|
+| `AA-02-SESSION-SUMMARY-LATEST.md` | `versions/sessions/versions-sessions-Session_Summary-v1.0-2026_01_09_ARCHIVE.md` | New session |
+| `source-prompts-Kling_O1_Video_Prompt-v1.0-2026_01_08.md-archive` | `versions/prompts/versions-prompts-Kling_O1_Video_Prompt-v1.0-2026_01_08_ARCHIVE.md` | Superseded by v1.5 |
+
+---
+
+## Key Decisions Made
+
+### Decision: Kling O1 Audio Limitation Confirmed
+
+**Category:** Technical / API Investigation
+**Decision:** Accept that Kling O1 reference-to-video endpoint does not support audio generation
+**Rationale:** API documentation confirms `generate_audio` is not in the input schema. The parameter is silently ignored.
+**Impact:** Need alternative approach for audio - either different model or 2-step pipeline
+**Status:** Confirmed
+
+### Decision: Explore 2-Step Pipeline
+
+**Category:** Technical / Architecture
+**Decision:** Research image composition → Kling 2.6 as alternative architecture
+**Rationale:** Kling 2.6 I2V has `generate_audio: true` but no elements array. Composition step could combine identities first.
+**Status:** Research complete, awaiting user decision
+**Trade-off:** Risk of identity loss during composition step
+
+---
+
+## Current State
+
+**Workflow Status:** v3.0 functional but NO AUDIO (API limitation)
+
+**Open Questions:**
+1. Should we switch to Kling 2.6 with image composition pre-step?
+2. Should we accept no audio and continue with Kling O1?
+3. Should we explore other video models (Veo 3, Sora 2)?
+
+---
+
+## What's Next
+
+**Priority 1:** User decision on architecture direction
+- Option A: Accept Kling O1 without audio
+- Option B: Implement 2-step pipeline (Reve Remix/FLUX → Kling 2.6)
+- Option C: Switch to different video model
+
+**Priority 2:** If 2-step selected, test identity preservation in composition tools
+
+---
+
+*Session closed: 2026-01-09*

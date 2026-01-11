@@ -1,7 +1,39 @@
 # Archive Log
 
 **Project:** Picture with Picasso
-**Last Updated:** 2026-01-09
+**Last Updated:** 2026-01-11
+
+---
+
+## 2026-01-11
+
+### Session Summary Archived
+
+| File Name | Destination | Reason | Description |
+|-----------|-------------|--------|-------------|
+| `AA-02-SESSION-SUMMARY-LATEST.md` | `versions/sessions/versions-sessions-Session_Summary-v1.0-2026_01_10_ARCHIVE.md` | New session | 2026-01-10 session - Audio pipeline architecture, interactive design |
+
+**Archive Notes:**
+- Brief Q&A session about Phase 2 requirements
+- Confirmed user input integration in script generation
+- Clarified tool requirements (ElevenLabs, Azure, LatentSync, OpenRouter, OpenAI)
+- No MCP servers needed for Phase 2 tools (all HTTP Request)
+
+---
+
+## 2026-01-10
+
+### Session Summary Archived
+
+| File Name | Destination | Reason | Description |
+|-----------|-------------|--------|-------------|
+| `AA-02-SESSION-SUMMARY-LATEST.md` | `versions/sessions/versions-sessions-Session_Summary-v1.0-2026_01_09_ARCHIVE.md` | New session | 2026-01-09 session - Kling O1 audio root cause, prompt v1.5 |
+
+**Archive Notes:**
+- Session focused on audio pipeline architecture analysis
+- Discovered fal.ai supports webhooks via `fal_webhook` parameter
+- Decided to use polling design (95% confidence) over webhooks (30-65%)
+- Created comprehensive architecture analysis document
 
 ---
 
@@ -66,13 +98,12 @@
 ## Archive Directory Structure
 
 ```
-archive/
-├── ARCHIVE-LOG.md      # This file - tracks all archived items
-├── sessions/           # Old session summaries
-├── workflows/          # Old workflow versions
-├── docs/               # Obsolete documentation
-├── PICTURE-WITH-PICASSO-WORKFLOW-DESIGN.md   # Superseded design
-└── WORKFLOW-VALIDATION-REPORT.md              # Superseded validation
+versions/
+    ARCHIVE-LOG.md          # This file - tracks all archived items
+    sessions/               # Old session summaries
+    workflows/              # Old workflow versions
+    prompts/                # Old prompt versions
+    schemas/                # Old schema versions
 ```
 
 ---
@@ -143,4 +174,4 @@ Archive directory structure created. No files archived yet (new project).
 
 ---
 
-*Updated: 2025-11-27*
+*Updated: 2026-01-10*

@@ -50,7 +50,16 @@
       "mcp__perplexity__perplexity_ask",
       "Bash(claude tasks)",
       "Bash(grep:*)",
-      "mcp__github__search_issues"
+      "mcp__github__search_issues",
+      "WebFetch(domain:youtu.be)",
+      "WebFetch(domain:www.youtube.com)",
+      "mcp__n8n-mcp__n8n_health_check",
+      "Bash(python:*)",
+      "Bash(python3:*)",
+      "WebFetch(domain:docs.fal.ai)",
+      "WebFetch(domain:www.hooklistener.com)",
+      "Skill(document-skills:xlsx)",
+      "Bash(pip install:*)"
     ],
     "deny": [],
     "ask": []

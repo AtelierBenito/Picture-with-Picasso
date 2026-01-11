@@ -1,128 +1,124 @@
 # Next Steps - Prioritized Action Items
 
-**Last Updated:** 2026-01-09
-**Project:** Picture with Picasso
+**Last Updated:** 2026-01-11
+**Current Phase:** Pre-Build Setup
+**Next Phase:** Phase 2 Build (Interactive Audio Pipeline)
 
 ---
 
-## DECISION REQUIRED: Architecture Direction
+## Immediate: Pre-Build Setup (45-60 min)
 
-The Kling O1 reference-to-video endpoint does NOT support audio generation. Choose a path forward:
+**Complete before build session:**
 
-### Option A: Accept Kling O1 Without Audio
+### Priority 1: Voice Setup (20 min)
+- [ ] Create ElevenLabs account
+- [ ] Get ElevenLabs API key
+- [ ] Create Picasso voice (Voice Design)
+- [ ] Create your voice clone (Instant Clone)
+- [ ] Save both Voice IDs
 
-**Pros:**
-- Best identity preservation (90-95%)
-- Current workflow already functional
-- No additional development
+### Priority 2: Face Recognition (15 min)
+- [ ] Create Azure account
+- [ ] Create Face API resource (Free F0 tier)
+- [ ] Get API key and endpoint
+- [ ] Prepare 3-5 reference photos of yourself
 
-**Cons:**
-- No audio in videos
-- Limited social media appeal
+### Priority 3: AI Services (10 min)
+- [ ] Create OpenRouter account
+- [ ] Get OpenRouter API key
+- [ ] Create/verify OpenAI account
+- [ ] Get OpenAI API key
 
-**If chosen:** Deploy v3.0 as-is, consider audio as future enhancement
+### Priority 4: Materials (5 min)
+- [ ] Save reference photos to `Picasso Images/BENIT_Reference/`
+- [ ] Prepare 2-3 test visitor photos
+- [ ] Fill out credential summary card
 
----
-
-### Option B: 2-Step Pipeline (Image Composition → Kling 2.6)
-
-**Architecture:**
-```
-Step 1: Reve Remix or FLUX.2
-        User photo + Picasso → Single composite image
-
-Step 2: Kling 2.6 Pro I2V
-        Composite → Video WITH audio
-```
-
-**Pros:**
-- Both identity AND audio possible
-- Uses proven fal.ai tools
-
-**Cons:**
-- Risk of identity loss in composition step
-- More complex workflow
-- Higher cost (~$0.13 vs ~$0.10)
-
-**If chosen:** Test Reve Remix identity preservation first
+**Full Guide:** `docs/guides/docs-guides-Phase_2_Setup_Guide-v1.0-2026_01_10.md`
 
 ---
 
-### Option C: Different Video Model
+## Phase 2 Build Sessions (7-10 hours total)
 
-**Candidates:**
-| Model | Identity | Audio | Access |
-|-------|----------|-------|--------|
-| Veo 3 | Good | Excellent | Limited API |
-| Sora 2 | Good | Excellent | ChatGPT Pro only |
-| Hailuo 2.3 | 70-80% | Good | fal.ai |
+### Phase 2A: Core Audio (2-3 hours)
+- [ ] Add Picasso TTS node (ElevenLabs Direct API)
+- [ ] Add ambient sound generation node
+- [ ] Add audio mixing node
+- [ ] Add LatentSync submit node
+- [ ] Add LatentSync polling loop
+- [ ] Test end-to-end with static script
 
-**Pros:**
-- May have both identity AND audio
-- Potential quality improvements
+### Phase 2B: Face Recognition (2 hours)
+- [ ] Create PersonGroup in Azure
+- [ ] Upload and train with your reference photos
+- [ ] Add face detection node
+- [ ] Add face identification node
+- [ ] Add voice assignment logic
+- [ ] Test BENIT recognition
 
-**Cons:**
-- Migration effort
-- May not match Kling O1 identity quality
-- Some models have limited API access
+### Phase 2C: Interactive Input (2-3 hours)
+- [ ] Add input content moderation node
+- [ ] Add Grok script generation node
+- [ ] Add output content moderation node
+- [ ] Connect user message to script generation
+- [ ] Test full interactive flow
 
-**If chosen:** Research Hailuo 2.3 on fal.ai as most accessible option
-
----
-
-## Immediate Priority (After Decision)
-
-### If Option A Selected
-1. Deploy v3.0 workflow with v1.5 prompt
-2. Test end-to-end with sample images
-3. Document audio limitation in user-facing materials
-
-### If Option B Selected
-1. Test Reve Remix with Picasso identity preservation
-2. If successful, design 2-step workflow
-3. Implement and test pipeline
-
-### If Option C Selected
-1. Research Hailuo 2.3 API on fal.ai
-2. Compare identity preservation capabilities
-3. Create migration plan
+### Phase 2D: Polish (1-2 hours)
+- [ ] Add visitor joy sounds
+- [ ] Refine audio mixing levels
+- [ ] Add error handling
+- [ ] Full integration testing
+- [ ] Update documentation
 
 ---
 
-## Pending Tasks (All Options)
+## Completed (Archive Reference)
 
-### Prompt Updates (If Needed)
-- [ ] v1.5 prompt deployed and tested
-- [ ] Execution 3981 character limit issue resolved
-
-### Workflow Configuration
-- [ ] Verify `falApiKey` in Workflow Configuration node
-- [ ] Update Prepare Kling Elements1 expressions for v1.5
-
-### Testing Checklist
-- [ ] Test with sample user photo + Picasso image
-- [ ] Verify identity preservation
-- [ ] Verify 9:16 aspect ratio
-- [ ] Verify 10 second duration
+- [x] Interactive Audio Pipeline architecture design (2026-01-10)
+- [x] Lip sync analysis (LatentSync is audio-driven) (2026-01-10)
+- [x] Content moderation strategy (OpenAI - FREE) (2026-01-10)
+- [x] Face recognition cost analysis (Azure - FREE tier) (2026-01-10)
+- [x] AI model selection (Grok 4.1 Fast via OpenRouter) (2026-01-10)
+- [x] ElevenLabs Integration guide (2026-01-10)
+- [x] Phase 2 Setup Guide created (2026-01-10)
+- [x] Audio pipeline architecture research (2026-01-10)
+- [x] Webhook vs polling analysis (2026-01-10)
+- [x] Kling O1 audio limitation confirmed (2026-01-09)
+- [x] Prompt character limit fix v1.5 (2026-01-09)
 
 ---
 
-## Reference Documents
+## Key Documents
 
 | Document | Purpose |
 |----------|---------|
-| `source/prompts/source-prompts-Kling_O1_Video_Prompt-v1.5-2026_01_09.md` | Current prompt (under 2,500 chars) |
-| `source/components/source-components-Submit_to_Kling_JSON_Body-v1.4-2026_01_09.md` | JSON body with generate_audio |
-| `docs/changelogs/docs-changelogs-Changelog_v2.4_to_v3.0-v1.0-2026_01_08.md` | Full change documentation |
+| `docs/guides/docs-guides-Phase_2_Setup_Guide-v1.0-2026_01_10.md` | **START HERE** - Setup checklist |
+| `docs/design/docs-design-Interactive_Audio_Pipeline-v1.0-2026_01_10.md` | Full architecture |
+| `docs/design/docs-design-ElevenLabs_Integration-v1.0-2026_01_10.md` | Voice setup |
+| `docs/analysis/docs-analysis-Lip_Sync_Audio_Pipeline-v1.0-2026_01_10.md` | Lip sync details |
 
 ---
 
-## Quick Decision Matrix
+## Future Phases (Not Yet Scheduled)
 
-**15 minutes:** → Review options above, make decision
-**30 minutes:** → Begin implementation based on decision
-**1-2 hours:** → Complete implementation and testing
+### Phase 3: Compression & Delivery
+- Video compression optimization
+- Delivery channel integration
+- Analytics tracking
+
+### Phase 4: Advanced Features
+- Multi-turn conversations
+- Real-time avatar (different tech)
+- Voice library expansion
 
 ---
 
-*Updated: 2026-01-09*
+## Ready Check
+
+When setup is complete, message: **"Ready to build Phase 2!"**
+
+We'll start with Phase 2A (Core Audio) and progress through each phase.
+
+---
+
+*Last updated: 2026-01-10*
