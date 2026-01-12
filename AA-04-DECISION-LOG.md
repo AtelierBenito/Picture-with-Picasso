@@ -1,7 +1,102 @@
 # Decision Log
 
 **Project:** Picture with Picasso
-**Last Updated:** 2026-01-10
+**Last Updated:** 2026-01-12
+
+---
+
+## 2026-01-12
+
+### Decision: Initialize GSD Project Management System
+
+**Category:** Process / Project Management
+**Decision:** Adopt GSD (Get Shit Done) hierarchical planning system for the Interactive Audio Pipeline
+**Rationale:**
+- Provides structured approach for 10-phase implementation
+- Session continuity via STATE.md
+- Allows YOLO mode for faster iteration
+**Alternatives Considered:**
+- Continue ad-hoc planning (rejected - too complex for 10 phases)
+- Use traditional project management tools (rejected - not integrated with Claude Code)
+**Impact:** All future work tracked via .planning/ directory
+**Implemented:** Yes - PROJECT.md, ROADMAP.md, STATE.md, config.json created
+
+---
+
+### Decision: YOLO Mode + Comprehensive Depth
+
+**Category:** Process / Configuration
+**Decision:** Use YOLO mode (skip all confirmation gates) with Comprehensive depth (detailed analysis)
+**Rationale:**
+- User prefers autonomous execution
+- Comprehensive ensures thorough work despite fewer checkpoints
+**Alternatives Considered:**
+- Normal mode (rejected - too many confirmations)
+- Express depth (rejected - insufficient detail for complex APIs)
+**Impact:** Faster iteration, detailed plans without interruptions
+**Implemented:** Yes - config.json configured
+
+---
+
+### Decision: ElevenLabs Direct API (Not via fal.ai)
+
+**Category:** Technical / API Integration
+**Decision:** Access ElevenLabs TTS and Sound Effects APIs directly, not through fal.ai wrapper
+**Rationale:**
+- Full control over voice parameters
+- No wrapper limitations
+- Direct access to Voice Design and Voice Cloning APIs
+**Alternatives Considered:**
+- fal.ai wrapper (rejected - may not expose all features)
+**Impact:** More flexibility, requires direct HTTP Request nodes in n8n
+**Reversible:** Yes - could switch to wrapper if needed
+**Implemented:** Pending (Phase 5)
+
+---
+
+### Decision: Input Channels - Telegram + Web Form Only
+
+**Category:** Technical / Architecture
+**Decision:** Support only Telegram bot and web form input channels (no email)
+**Rationale:**
+- User confirmed these are the only active channels
+- Simplifies input parsing
+- Reduces maintenance burden
+**Alternatives Considered:**
+- Add email channel (rejected - not currently used)
+**Impact:** Two input paths to maintain, not three
+**Implemented:** Pending (Phase 1)
+
+---
+
+### Decision: Visual Quality as Core Value
+
+**Category:** Product / Quality
+**Decision:** Visual quality and identity preservation is THE core value - not audio
+**Rationale:**
+- User quote: "What destroys the magic is quirky interaction of the figures and the people not looking like themselves"
+- Picasso must be proportional (5'4" / 163cm)
+- Face morphing/stretching destroys likeness
+**Alternatives Considered:**
+- Audio quality as core value (rejected - video quality more critical)
+**Impact:** All decisions should prioritize likeness preservation
+**Implemented:** Yes - documented in PROJECT.md
+
+---
+
+### Decision: Dual Project Structure
+
+**Category:** Process / Organization
+**Decision:** Use BOTH GSD's `.planning/` directory AND existing project structure (source/, docs/, versions/)
+**Rationale:**
+- GSD provides planning rigor and session continuity
+- Existing structure contains production artifacts
+- Complementary purposes, no conflict
+**Alternatives Considered:**
+- Replace existing structure with GSD (rejected - existing structure has value)
+- Skip GSD (rejected - need planning for 10 phases)
+**Impact:** Two organizational systems coexist
+**Implemented:** Yes
 
 ---
 
@@ -214,4 +309,4 @@ face morphing, identity swap, duplicated limbs, extra limbs, distorted anatomy, 
 
 ---
 
-*Updated: 2026-01-10*
+*Updated: 2026-01-12*

@@ -1,0 +1,1465 @@
+{
+  "name": "Picture with Picasso -v.3-v2.4",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "4315989e-2fc7-4b71-b563-4aabc640abb4",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -4784,
+        896
+      ],
+      "webhookId": "56bd3397-283a-4db3-af48-edfe566fbab6",
+      "credentials": {
+        "telegramApi": {
+          "id": "kiyk5gzLZBE7EpvL",
+          "name": "Picture with Picasso"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "formTitle": "Picasso Video Generator",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Upload Your Image",
+              "fieldType": "file"
+            },
+            {
+              "fieldLabel": "Your Email Address",
+              "fieldType": "email",
+              "placeholder": "your@email.com",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "dec6ceaa-41c7-478d-b5bd-f4fa2cb01d9d",
+      "name": "Form Trigger",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -4784,
+        1248
+      ],
+      "webhookId": "87fa900d-c919-4957-80e1-dbd5d8a3be2c"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "inputSource",
+              "value": "telegram",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "chatId",
+              "value": "={{ $json.message?.chat?.id || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "telegramFileId",
+              "value": "={{ $json.message.photo[$json.message.photo.length - 1].file_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "ed125ff9-f208-4c94-ae8d-04635d79789f",
+      "name": "Set Telegram Source",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4560,
+        896
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "inputSource",
+              "value": "form",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "userEmail",
+              "value": "={{ $json['Your Email Address'] || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "uploadedImageUrl",
+              "value": "={{ $json['Upload Your Image'] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "d6f01e93-4ba1-4646-b15a-2490437d7ea8",
+      "name": "Set Form Source",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4560,
+        1248
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-4",
+              "name": "duration",
+              "value": "5",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "resolution",
+              "value": "720p",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "optimizePrompt",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "id-7",
+              "name": "picassoHeight",
+              "value": "64",
+              "type": "string"
+            },
+            {
+              "id": "id-8",
+              "name": "videoArchiveFolderId",
+              "value": "665871005160-638u09k5ebciprm2us4oh5cu393pu04e.apps.googleusercontent.com",
+              "type": "string"
+            },
+            {
+              "id": "id-9",
+              "name": "userUploadedImagesFolderId",
+              "value": "665871005160-638u09k5ebciprm2us4oh5cu393pu04e.apps.googleusercontent.com",
+              "type": "string"
+            },
+            {
+              "id": "id-10",
+              "name": "composedImagesFolderId",
+              "value": "665871005160-638u09k5ebciprm2us4oh5cu393pu04e.apps.googleusercontent.com",
+              "type": "string"
+            },
+            {
+              "id": "id-11",
+              "name": "falApiKey",
+              "value": "29069673-bbfe-4523-b49d-d1c3f06840fb:4bc13283d65b0c0bdd1e249cb3806b47",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "e88531cf-be30-4170-823d-7d1e37dfa51e",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4336,
+        1056
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.inputSource }}",
+              "rightValue": "telegram",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "3d69fa38-4757-481d-b3e5-ac39b6454a6a",
+      "name": "Route by Input Source",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -4224,
+        848
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.telegramFileId }}",
+        "additionalFields": {}
+      },
+      "id": "9cdac92b-13cd-41f4-aef8-99107bff4347",
+      "name": "Download Telegram Photo",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -3888,
+        784
+      ],
+      "webhookId": "e809a231-a215-44d0-a7b1-62c52cf0a899",
+      "credentials": {
+        "telegramApi": {
+          "id": "kiyk5gzLZBE7EpvL",
+          "name": "Picture with Picasso"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.uploadedImageUrl }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "id": "5b5f453f-a3b9-49d7-b0aa-9a74f8d748be",
+      "name": "Download Form Image",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -3840,
+        1216
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "resize",
+        "width": 2048,
+        "height": 2048,
+        "resizeOption": "contain",
+        "options": {}
+      },
+      "id": "458f23d4-8f26-4ba5-b556-7ceddc485942",
+      "name": "Edit Image (Resize)",
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -3664,
+        1056
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get binary data properly for newer n8n versions\nconst item = $input.first();\nconst binaryKeys = Object.keys(item.binary);\nconst binaryKey = binaryKeys[0] || 'data';\n\n// Get the actual buffer using n8n helper\nconst binaryData = item.binary[binaryKey];\nconst dataBuffer = await this.helpers.getBinaryDataBuffer(0, binaryKey);\nconst base64String = dataBuffer.toString('base64');\nconst mimeType = binaryData.mimeType || 'image/jpeg';\n\n// Pass through previous JSON data\nconst previousJson = item.json;\n\nreturn [{\n  json: {\n    ...previousJson,\n    userImageBase64: `data:${mimeType};base64,${base64String}`\n  }\n}];"
+      },
+      "id": "f2d19dfa-0187-45ab-9fef-5a4b1de7aaf5",
+      "name": "Convert User Image to Base64",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3440,
+        1056
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "fileFolder",
+        "queryString": " ",
+        "returnAll": true,
+        "filter": {
+          "folderId": {
+            "__rl": true,
+            "value": "1i52bCJhPJKACKsXDSzMit5rnehpXXkKi",
+            "mode": "list",
+            "cachedResultName": "Picasso Images",
+            "cachedResultUrl": "https://drive.google.com/drive/folders/1i52bCJhPJKACKsXDSzMit5rnehpXXkKi"
+          },
+          "whatToSearch": "files"
+        },
+        "options": {}
+      },
+      "id": "0871ec46-010e-4631-8f43-e6f9428c6669",
+      "name": "Get Picasso Images",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -3760,
+        1440
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "RMKkKfrjtxNPf5LV",
+          "name": "Picture with Picasso"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": " const items = $input.all();\n  const files = items.map(item => item.json);\n\n  // Guard against empty folder\n  if (files.length === 0) {\n    throw new Error('No Picasso images found in Google Drive folder.');\n  }\n\n  // Get workflow static data for persistence\n  const staticData = $getWorkflowStaticData('global');\n\n  // Initialize or reset the shuffle bag if needed\n  if (!staticData.picassoShuffleBag || staticData.picassoShuffleBag.length === 0) {\n    // Create array of indices [0, 1, 2, ..., n-1]\n    const indices = [];\n    for (let i = 0; i < files.length; i++) {\n      indices.push(i);\n    }\n\n    // Fisher-Yates shuffle\n    for (let i = indices.length - 1; i > 0; i--) {\n      const j = Math.floor(Math.random() * (i + 1));\n      [indices[i], indices[j]] = [indices[j], indices[i]];\n    }\n\n    staticData.picassoShuffleBag = indices;\n  }\n\n  // Pop the next index from the shuffle bag\n  const nextIndex = staticData.picassoShuffleBag.pop();\n  const selectedFile = files[nextIndex];\n\n  return [{ json: selectedFile }];"
+      },
+      "id": "0fd750f3-8b07-4078-a648-d96d0b273c22",
+      "name": "Select Random Picasso Image",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3504,
+        1440
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "download",
+        "fileId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $json.id }}"
+        },
+        "options": {}
+      },
+      "id": "16020131-6ffe-4728-9544-4b91564f1a3b",
+      "name": "Download Picasso Image",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -3312,
+        1440
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "RMKkKfrjtxNPf5LV",
+          "name": "Picture with Picasso"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "resize",
+        "width": 2048,
+        "height": 2048,
+        "resizeOption": "onlyIfLarger",
+        "options": {}
+      },
+      "id": "0d92f010-b5e6-4a9f-adb9-e5acd3357004",
+      "name": "Resize Picasso Image",
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [
+        -3104,
+        1440
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get binary data properly for newer n8n versions\nconst item = $input.first();\nconst binaryKeys = Object.keys(item.binary);\nconst binaryKey = binaryKeys[0] || 'data';\n\n// Get the actual buffer using n8n helper\nconst binaryData = item.binary[binaryKey];\nconst dataBuffer = await this.helpers.getBinaryDataBuffer(0, binaryKey);\nconst base64String = dataBuffer.toString('base64');\nconst mimeType = binaryData.mimeType || 'image/jpeg';\n\nreturn [{\n  json: {\n    picassoImageBase64: `data:${mimeType};base64,${base64String}`\n  }\n}];"
+      },
+      "id": "e6edf1f5-b965-4ad1-b9b9-55573fd8b05f",
+      "name": "Convert Picasso Image to Base64",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2944,
+        1440
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $('Workflow Configuration').first().json.inputSource }}",
+              "rightValue": "telegram",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "e0f2150c-301e-4085-8ab6-4cfeaad1258f",
+      "name": "Route Output",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -976,
+        1232
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "sendVideo",
+        "chatId": "={{ $('Workflow Configuration').first().json.chatId }}",
+        "binaryData": true,
+        "additionalFields": {}
+      },
+      "id": "c6881070-6152-4d6d-9056-2925bd96e2e7",
+      "name": "Send to Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -752,
+        1136
+      ],
+      "webhookId": "06925f51-77ed-43b9-ace5-ddfb43d25f5a",
+      "credentials": {
+        "telegramApi": {
+          "id": "QiO6YgFr5YiIILyk",
+          "name": "SparkyOCRbot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "sendTo": "={{ $json.userEmail }}",
+        "subject": "Your Picasso Video is Ready!",
+        "message": "<p>Your custom Picasso video has been generated!</p><p>Please find the video attached.</p>",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          }
+        }
+      },
+      "id": "d81deb56-91e5-47f6-a99b-016b5bb8576e",
+      "name": "Send to Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -752,
+        1328
+      ],
+      "webhookId": "4b3d2263-ffbb-4960-a936-c895185ad01f",
+      "credentials": {
+        "googleApi": {
+          "id": "5oBdM5b71SEnExoL",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "name": "=Picasso_Video_{{ $now.toFormat('yyyy-MM-dd_HH-mm-ss') }}.mp4",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "=https://drive.google.com/drive/u/0/folders/1uwuXK7aOOj4PDeOydZs38437M-8n-GPl?ths=true",
+          "mode": "url"
+        },
+        "options": {}
+      },
+      "id": "d6e7e1be-86c4-46ae-85d1-858d2719d4f9",
+      "name": "Archive Video to Google Drive",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -976,
+        1024
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "DZfsgU78IH2ZA29H",
+          "name": "Google Drive account 7"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "serviceAccount",
+        "name": "=User_Upload_{{ $now.toFormat('yyyy-MM-dd_HH-mm-ss') }}.jpg",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Workflow Configuration').first().json.userUploadedImagesFolderId }}"
+        },
+        "options": {}
+      },
+      "id": "d4d64f84-9401-4fa1-81ec-bbb1533b4bbf",
+      "name": "Archive User Image",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -3424,
+        1264
+      ],
+      "credentials": {
+        "googleApi": {
+          "id": "5oBdM5b71SEnExoL",
+          "name": "Google Service Account account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "# 📱 Telegram Setup\n\n**Required Credentials:**\n- Telegram Bot Token\n\n**Nodes Using This:**\n- Telegram Trigger\n- Send to Telegram\n\n**Setup Steps:**\n1. Create bot via @BotFather\n2. Get bot token\n3. Add Telegram API credentials in n8n",
+        "height": 280,
+        "width": 350,
+        "color": 4
+      },
+      "id": "d98e4440-d270-4c42-bdde-6b53b4d90748",
+      "name": "Telegram Setup",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -6352,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# 📁 Google Drive Setup\n\n**Required Credentials:**\n- Google Service Account\n\n**Required Configuration:**\n- Picasso images folder ID\n- Video archive folder ID\n- User uploaded images folder ID\n\n**Nodes Using This:**\n- Get Picasso Images\n- Download Picasso Image\n- Archive Video to Google Drive\n- Archive User Image\n\n**Setup Steps:**\n1. Create Google Service Account\n2. Create folders:\n   - Picasso Images (source images)\n   - Video Archive (generated videos)\n   - User Uploads (archived user images)\n3. Share all folders with service account email\n4. Copy folder IDs to Workflow Configuration",
+        "height": 380,
+        "width": 400,
+        "color": 5
+      },
+      "id": "c6162de9-29d8-497c-ab48-83fa492f7c26",
+      "name": "Google Drive Setup",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -5344,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# 🎬 Kie.ai API Setup\n\n**Required Credentials:**\n- Kie.ai API Key (Header Auth)\n\n**Nodes Using This:**\n- Create Video Request\n- Get Videos\n\n**Setup Steps:**\n1. Sign up at kie.ai\n2. Get API key from dashboard\n3. Add as Header Auth credential\n4. Header name: Authorization\n5. Header value: Bearer YOUR_API_KEY\n\n**Cost:** ~$0.05-0.10 per second of video",
+        "height": 360,
+        "width": 380,
+        "color": 6
+      },
+      "id": "e81215ea-c6ea-46a5-b6af-1276920d4c3c",
+      "name": "Kie.ai API Setup",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -5280,
+        2096
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# 📧 Gmail Setup\n\n**Required Credentials:**\n- Google Service Account\n\n**Nodes Using This:**\n- Send to Email\n\n**Setup Steps:**\n1. Use same Google Service Account as Drive\n2. Enable Gmail API in Google Cloud Console\n3. Grant domain-wide delegation if needed",
+        "height": 300,
+        "width": 360,
+        "color": 7
+      },
+      "id": "5cc4521c-e396-489e-9d16-df2dedfd5755",
+      "name": "Gmail Setup",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -5888,
+        336
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# 🎨 Picasso Video Generator v2.4\n\n## Workflow Overview\nThis workflow creates AI-generated videos that blend user-uploaded images with Picasso artworks.\n\n**Two Input Methods:**\n1. **Web Form** - Users upload image + email\n2. **Telegram Bot** - Users send message to bot\n\n**v2.4 Changes:**\n- Fixed base64 conversion: use this.helpers.getBinaryDataBuffer()\n- Newer n8n versions store binary differently (filesystem-v2)\n- Both Convert nodes now properly extract actual base64 data\n\n**Process:**\n1. User submits image via Form or Telegram\n2. Source tagged immediately (telegram/form)\n3. Routed to correct download path\n4. Image resized to max 2048px\n5. Converted to base64 for Reve Remix\n6. Picasso image also resized and converted\n7. Merged with Picasso image (combineByPosition)\n8. Composed via Reve Remix API\n9. Video generated via Kie.ai\n10. Result sent via Telegram or Email",
+        "height": 600,
+        "width": 500,
+        "color": 3
+      },
+      "id": "4f48bac4-e3de-4928-8464-59a3bfc4e71d",
+      "name": "Workflow Overview",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -6928,
+        864
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# 🎨 Reve Remix Setup (fal.ai)\n\n**API Endpoint:**\nhttps://fal.run/fal-ai/reve/remix\n\n**Required:**\n- fal.ai API Key\n- Add to Workflow Configuration as falApiKey\n\n**Request Format:**\n```json\n{\n  \"prompt\": \"YOUR PROMPT HERE\",\n  \"image_urls\": [\n    \"data:image/...;base64,...\",\n    \"data:image/...;base64,...\"\n  ],\n  \"aspect_ratio\": \"16:9\",\n  \"num_images\": 1,\n  \"output_format\": \"png\"\n}\n```\n\n**Image References in Prompt:**\n- <img>0</img> = User image (first in array)\n- <img>1</img> = Picasso image (second in array)\n\n**Limits:**\n- Max 10MB per image\n- Max 2048px recommended\n- 1-6 images supported",
+        "height": 480,
+        "width": 400,
+        "color": 2
+      },
+      "id": "09e40fa6-59fb-492c-b0f3-d6dd2066837f",
+      "name": "Reve Remix Setup",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        784,
+        880
+      ]
+    },
+    {
+      "parameters": {
+        "content": "# 🔄 v2.3 Architecture\n\n**Changes from v2.2.b:**\n- Get Picasso Images: operation=search, filter files only\n- Select Random: error handling for empty/bounds\n- NEW: Resize Picasso Image node (2048px max)\n- Merge: combineByPosition (fixed)\n\n**Picasso Path Flow:**\n```\nGet Picasso Images → Select Random → Download\n    ↓\nResize Picasso (2048px, onlyIfLarger)\n    ↓\nConvert to Base64 → Merge (input 1)\n```\n\n**User Path Flow:**\n```\nDownload → Resize (2048px) → Base64 → Merge (input 0)\n```\n\n**Key Fields Set:**\n- `inputSource`: 'telegram' or 'form'\n- `telegramFileId`: for telegram path\n- `uploadedImageUrl`: for form path",
+        "height": 420,
+        "width": 420
+      },
+      "id": "b1129386-70d8-4669-8a8c-5105e39d66fa",
+      "name": "v2.2.a Architecture Notes",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -4432,
+        2112
+      ]
+    },
+    {
+      "parameters": {
+        "name": "={{ $json.result.file_unique_id + $now.toFormat('yyyyLLdd_HHmmss') }}\n\n",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1LlAN8Fbhm95x9mwEs4NAljDIkBCx-39a",
+          "mode": "list",
+          "cachedResultName": "User Upload Images",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1LlAN8Fbhm95x9mwEs4NAljDIkBCx-39a"
+        },
+        "options": {}
+      },
+      "id": "fa7aee34-2899-496c-b491-3d22ae526e66",
+      "name": "Archive User Image1",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -3680,
+        800
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "DZfsgU78IH2ZA29H",
+          "name": "Google Drive account 7"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "kling-elements",
+              "name": "elements",
+              "value": "={{ [\n  {\n    \"reference_image_urls\": [$('Convert User Image to Base64').item.json.userImageBase64],\n    \"frontal_image_url\": $('Convert User Image to Base64').item.json.userImageBase64\n  },\n  {\n    \"reference_image_urls\": [$('Convert Picasso Image to Base64').item.json.picassoImageBase64],\n    \"frontal_image_url\": $('Convert Picasso Image to Base64').item.json.picassoImageBase64\n  }\n] }}",
+              "type": "array"
+            },
+            {
+              "id": "kling-prompt",
+              "name": "prompt",
+              "value": "@Element1 (visitors) and @Element2 (Picasso) are old friends reuniting after a long time apart. They embrace, laugh, and horse around with the warmth of a long-awaited reunion.\n\nVISUAL FIDELITY - @Element2 IS THE MASTER:\nAll visual characteristics from @Element2: color palette (or sepia/B&W if source is), film grain, texture, lighting, shadow depth. Preserve period-authentic environment exactly - architecture, furnishings, fixtures. No modern elements.\n\nIDENTITY - PIXEL-PERFECT ACCURACY:\nEvery person matches their source image EXACTLY - pixel-level accuracy for all facial features, skin texture, hair, and clothing. No approximations, no AI interpretations.\n\n@Element2 (Picasso): Reproduce his face exactly as shown. Every feature, every detail, frame-by-frame consistency. If clean-shaven in source, he remains clean-shaven. No drift, no morphing.\n\n@Element1 (Visitors): Reproduce each face exactly as shown. Same eyes, nose, mouth, skin, hair. Lock identity from first to last frame. No blending between people, no identity drift.\n\nONLY adaptation: apply @Element2's color/grain/texture to visitors so they exist in the same visual world. Physical identity remains pixel-perfect.\n\nSCALE: Picasso is 5'4\" (163cm). Size all others proportionally. Taller visitors should tower over Picasso.\n\nCHARACTERS: Picasso fully animated and expressive. All characters move, gesture, react, and speak with equal energy.\n\nINTERACTION: Reunion energy - excited greetings, warm embraces, playful banter. Picasso actively engages: laughing, gesturing, clapping friends on back.\n\nAUDIO REQUIRED - THIS VIDEO MUST HAVE SOUND:\n- Picasso's voice: warm, energetic, Spanish-accented male voice\n- Vocalizations: \"Hey!\", \"Ah, my friend!\", joyful exclamations, hearty laughter\n- Visitor voices: natural responses, laughter\n- Ambient audio: period-authentic sounds from @Element2 environment\n- Lip sync: mouth movements must match audio\n\nDO NOT generate a silent video. Audio is mandatory.\n\nCAMERA: Subtle naturalistic movement - gentle push toward subjects or slow drift around group.\n\nTECHNICAL: Exact likeness throughout. Natural proportions, no duplicated limbs. Smooth motion. Lip sync. 9:16 ratio. 10 seconds.",
+              "type": "string"
+            },
+            {
+              "id": "kling-duration",
+              "name": "duration",
+              "value": "10",
+              "type": "string"
+            },
+            {
+              "id": "kling-aspect-ratio",
+              "name": "aspect_ratio",
+              "value": "9:16",
+              "type": "string"
+            },
+            {
+              "id": "kling-negative-prompt",
+              "name": "negative_prompt",
+              "value": "face morphing, identity swap, identity change, identity drift, face morphing between frames, changing features, approximate likeness, AI interpretation of face, added facial hair, removed facial hair, mustache on clean-shaven face, beard on clean-shaven face, goatee on clean-shaven face, changed hairstyle, changed hair color, changed clothing, aged face, de-aged face, added wrinkles, removed wrinkles, invented features, modern color grading, digital smoothing, smoothed grain, removed grain, modern clarity, LED lighting, modern furniture, duplicated limbs, extra limbs, distorted anatomy, unnatural proportions, changing background, motion blur, static Picasso, frozen characters, stiff poses, silent video, no audio, muted, no sound, soundless, out of sync lip movements, mismatched audio, closed mouths while speaking, Picasso taller than 5'4\", wrong height, wrong proportions",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2608,
+        1424
+      ],
+      "id": "865e88a8-4a8b-41d8-bae0-8d2b3c55f709",
+      "name": "Prepare Kling Elements1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://queue.fal.run/fal-ai/kling-video/o1/reference-to-video",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Key {{ $('Workflow Configuration').item.json.falApiKey }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  \"prompt\": $json.prompt,\n  \"negative_prompt\": $json.negative_prompt,\n  \"elements\": $json.elements,\n  \"duration\": $json.duration,\n  \"aspect_ratio\": $json.aspect_ratio,\n  \"generate_audio\": true\n}) }}",
+        "options": {
+          "timeout": 120000
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -2384,
+        1424
+      ],
+      "id": "c6a9c203-b58b-4ec3-911c-90c873cf905f",
+      "name": "Submit to Kling1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "fu7JiV0X0vwfVlOO",
+          "name": "Fal.ai API-2026"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "retry-count",
+              "name": "retryCount",
+              "value": "0",
+              "type": "number"
+            },
+            {
+              "id": "request-id",
+              "name": "request_id",
+              "value": "={{ $json.request_id }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2160,
+        1424
+      ],
+      "id": "f906189e-fb72-490a-b3b3-ef4daf76d94a",
+      "name": "Initialize Retry Counter1"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.status_url }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Key {{ $('Workflow Configuration').item.json.falApiKey }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1936,
+        1424
+      ],
+      "id": "bee1f2f1-67ca-4a52-81db-567514a4c261",
+      "name": "Check Kling Status1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "COMPLETED",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "COMPLETED"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "FAILED",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "FAILED"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "IN_QUEUE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PENDING"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "IN_PROGRESS",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PENDING"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1712,
+        1424
+      ],
+      "id": "c879f0a9-ada5-44c8-b1c7-651960702663",
+      "name": "Status Router1"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.response_url }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "=Key {{ $('Workflow Configuration').item.json.falApiKey }}"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1488,
+        1232
+      ],
+      "id": "6b92924e-f542-421a-8117-84e230624d8d",
+      "name": "Get Kling Result1",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "fu7JiV0X0vwfVlOO",
+          "name": "Fal.ai API-2026"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "increment-retry",
+              "name": "retryCount",
+              "value": "={{ ($json.retryCount ?? 0) + 1 }} ",
+              "type": "number"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1488,
+        1616
+      ],
+      "id": "42ea8320-e168-42db-8343-69895672def4",
+      "name": "Increment Retry Counter1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "max-retry-check",
+              "leftValue": "={{ ($json.retryCount ?? 0) + 1 }}",
+              "rightValue": 30,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -1264,
+        1616
+      ],
+      "id": "69ddea75-0556-47a6-99d1-f875503cab9b",
+      "name": "Check Max Retries1"
+    },
+    {
+      "parameters": {
+        "amount": 20
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -1040,
+        1712
+      ],
+      "id": "040fe8f9-6ed0-492a-a303-c0df8a0573e6",
+      "name": "Wait for Kling1",
+      "webhookId": "3ca6e677-a0d7-47d2-8074-7521778e1570"
+    },
+    {
+      "parameters": {
+        "url": "={{ $('Get Kling Result1').item.json.video.url }}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1264,
+        1232
+      ],
+      "id": "07196dc0-5267-412a-bd23-e1063721dc52",
+      "name": "Download Kling Video1"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "id": "6154341d-c175-46fb-8905-8048c9efc605",
+      "name": "Merge Images for Reve1",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        -2768,
+        1248
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Telegram Source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Form Trigger": {
+      "main": [
+        [
+          {
+            "node": "Set Form Source",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Telegram Source": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Form Source": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Route by Input Source",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Picasso Images",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Input Source": {
+      "main": [
+        [
+          {
+            "node": "Download Telegram Photo",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Download Form Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Telegram Photo": {
+      "main": [
+        [
+          {
+            "node": "Edit Image (Resize)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Archive User Image1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Form Image": {
+      "main": [
+        [
+          {
+            "node": "Edit Image (Resize)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Archive User Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Image (Resize)": {
+      "main": [
+        [
+          {
+            "node": "Convert User Image to Base64",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert User Image to Base64": {
+      "main": [
+        [
+          {
+            "node": "Merge Images for Reve1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Picasso Images": {
+      "main": [
+        [
+          {
+            "node": "Select Random Picasso Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Select Random Picasso Image": {
+      "main": [
+        [
+          {
+            "node": "Download Picasso Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Download Picasso Image": {
+      "main": [
+        [
+          {
+            "node": "Resize Picasso Image",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resize Picasso Image": {
+      "main": [
+        [
+          {
+            "node": "Convert Picasso Image to Base64",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert Picasso Image to Base64": {
+      "main": [
+        [
+          {
+            "node": "Merge Images for Reve1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Archive Video to Google Drive": {
+      "main": [
+        []
+      ]
+    },
+    "Route Output": {
+      "main": [
+        [
+          {
+            "node": "Send to Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send to Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Kling Elements1": {
+      "main": [
+        [
+          {
+            "node": "Submit to Kling1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Submit to Kling1": {
+      "main": [
+        [
+          {
+            "node": "Initialize Retry Counter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Initialize Retry Counter1": {
+      "main": [
+        [
+          {
+            "node": "Check Kling Status1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Kling Status1": {
+      "main": [
+        [
+          {
+            "node": "Status Router1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status Router1": {
+      "main": [
+        [
+          {
+            "node": "Get Kling Result1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Increment Retry Counter1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Increment Retry Counter1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Increment Retry Counter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Kling Result1": {
+      "main": [
+        [
+          {
+            "node": "Download Kling Video1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Increment Retry Counter1": {
+      "main": [
+        [
+          {
+            "node": "Check Max Retries1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Max Retries1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Wait for Kling1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Kling1": {
+      "main": [
+        [
+          {
+            "node": "Check Kling Status1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Archive User Image": {
+      "main": [
+        []
+      ]
+    },
+    "Download Kling Video1": {
+      "main": [
+        [
+          {
+            "node": "Archive Video to Google Drive",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Route Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Images for Reve1": {
+      "main": [
+        [
+          {
+            "node": "Prepare Kling Elements1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "0b06b2cf-4ee3-4179-9595-769afa1101fc",
+  "meta": {
+    "instanceId": "2a90db11012d1888dfe42fe3dfc7ff62834bedff55ddddb3b8f53799ed49c546"
+  },
+  "id": "Q2Z6nJYPotQnhlwj",
+  "tags": []
+}
