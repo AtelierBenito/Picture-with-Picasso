@@ -9,6 +9,7 @@ Running log of lessons learned during development. Each entry is concise for eff
 | ID | Title | Category | Date | Summary |
 |----|-------|----------|------|---------|
 | [LL-001](docs-lessons-learned-API_Character_Limits-v1.0-2026_01_10.md) | API Character Limits & JSON Encoding | API Integration | 2026-01-10 | Prompts under API limit can fail due to JSON double-escaping in n8n. Keep 10% buffer. |
+| [LL-002](docs-lessons-learned-Model_Capability_Validation-v1.0-2026_01_11.md) | Validate Model Capabilities Before Tool Change | Tool Selection | 2026-01-11 | Never recommend tool changes from changelogs alone. Validate ALL workflow requirements first. |
 
 ---
 
@@ -30,4 +31,4 @@ Running log of lessons learned during development. Each entry is concise for eff
 
 ---
 
-*Last Updated: 2026-01-10*
+*Last Updated: 2026-01-11*

@@ -59,7 +59,10 @@
       "WebFetch(domain:docs.fal.ai)",
       "WebFetch(domain:www.hooklistener.com)",
       "Skill(document-skills:xlsx)",
-      "Bash(pip install:*)"
+      "Bash(pip install:*)",
+      "WebFetch(domain:kie.ai)",
+      "WebFetch(domain:www.analyticsvidhya.com)",
+      "WebFetch(domain:docs.x.ai)"
     ],
     "deny": [],
     "ask": []

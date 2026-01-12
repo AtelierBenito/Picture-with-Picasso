@@ -351,6 +351,7 @@ If issues arise with v3.0:
 
 | Date | Version | Changes |
 |------|---------|---------|
+| 2026-01-11 | v1.9.2 | Group reunion dynamics, ALL-to-ALL interaction, strengthened identity preservation |
 | 2026-01-09 | v1.5 | Added v3.0.5 - Fixed 2500 char limit (was 5600→2383), added period audio prohibitions |
 | 2026-01-09 | v1.4 | Added v3.0.4 - Historical fidelity, identity preservation, visual master constraints |
 | 2026-01-09 | v1.3 | Added v3.0.3 audio direction (vocalizations, expressions, lip sync - optimized for Kling-Foley) |
@@ -750,6 +751,136 @@ From `docs/design/docs-design-Consolidated_Prompts_from_v2.4-v1.0-2026_01_08.md`
 | `duration` | `10` | 10 second video |
 | `aspect_ratio` | `9:16` | Vertical, social media native |
 | `generate_audio` | `true` | Native Kling-Foley audio |
+
+---
+
+## v1.9.2 Group Reunion Dynamics & Identity Strengthening (2026-01-11)
+
+### Issues Identified in v1.9.1 Testing
+
+| Issue | Root Cause |
+|-------|------------|
+| Generic hand gestures only | Interaction buried mid-prompt, model ignores it |
+| People standing apart | No explicit "physical contact required" directive |
+| Picasso-to-visitor only | No ALL-to-ALL interaction language |
+| Visitor likeness drift | Identity section too low in prompt |
+| Formal/stiff energy | "platonic" and passive language |
+
+### Solution: Major Prompt Restructure
+
+**Key Principle: Primacy Effect**
+
+I2V models heavily weight the BEGINNING of prompts. Moved interaction to FIRST section.
+
+### Prompt Changes
+
+#### Structure Reorder
+
+| Section | v1.9.1 Position | v1.9.2 Position |
+|---------|-----------------|-----------------|
+| Interaction | Paragraph 7 | **FIRST** |
+| Identity | Paragraph 2 | Second |
+| Visual Fidelity | Paragraph 1 | Third |
+| Motion | Paragraph 5 | Fourth |
+
+#### New GROUP REUNION Section (First in Prompt)
+
+```
+GROUP REUNION – THE HEART OF THIS VIDEO:
+Everyone in this frame—@Element1 (visitors) and @Element2 (Picasso)—are great
+friends who haven't seen each other in years. This is the surprise reunion.
+They are ecstatic. They can't believe it.
+
+ALL figures interact with EACH OTHER, not just with Picasso:
+- Visitors embrace each other AND Picasso
+- Group hugs, arms around multiple shoulders
+- Friends grabbing friends, pulling them closer
+- Shared laughter rippling through the group
+- Playful shoving, back-patting, hand-clasping between everyone
+- The energy of "I can't believe you're HERE!"
+
+Physical contact between ALL parties is REQUIRED. No one stands apart.
+No polite distance. No observer figures. Everyone is IN the reunion.
+```
+
+#### Identity Section Strengthened
+
+Added:
+- "NON-NEGOTIABLE" emphasis
+- "Lock: face shape, facial features, skin tone, hair, clothing, accessories"
+- "No drift, no morphing, no interpretation"
+
+#### Removed
+
+| Term | Reason |
+|------|--------|
+| "platonic" | User request - clinical/cold connotation |
+| "MOTION ORIGIN" section | Was anchoring model to static source pose |
+| "BEHAVIORAL VARIABILITY" section | Replaced with group dynamics |
+
+### Negative Prompt Additions
+
+Added 15 new anti-isolation terms:
+
+```
+standing apart, isolated figures, polite distance, observer posture,
+watching from sidelines, one-on-one only, ignoring other visitors,
+separate conversations, formal arrangement, posed group photo, stiff lineup,
+hands raised without purpose, distant body language, formal posture, static figures
+```
+
+### Files Created
+
+| File | Purpose |
+|------|---------|
+| `source/prompts/source-prompts-Kling_O1_Video_Prompt-v1.9.2-2026_01_11.md` | New video prompt |
+| `source/prompts/source-prompts-Kling_O1_Negative_Prompt-v1.9.2-2026_01_11.md` | New negative prompt |
+
+### Manual Workflow Updates Required
+
+| Node | Field | Action |
+|------|-------|--------|
+| Prepare Kling Elements1 | prompt | Replace with v1.9.2 prompt |
+| Prepare Kling Elements1 | negative_prompt | Replace with v1.9.2 negative prompt |
+
+### Optional Enhancement: Interaction Randomization
+
+Add a Code node before prompt assembly for per-video interaction variety:
+
+```javascript
+const interactions = [
+  "The whole group collapses into a spontaneous group hug, arms wrapping around everyone",
+  "Friends grab each other by the shoulders in disbelief, laughing and pulling closer",
+  "Everyone reaches for everyone—hands clasping, backs being patted, pure joy",
+  "The group clusters together, arms around each other's shoulders, beaming",
+  "Friends playfully shove each other while laughing, then pull into embraces",
+  "Picasso pulls two visitors in while they reach for each other too—triangle of warmth",
+  "The reunion erupts—hugging, hand-holding, joyful chaos between all friends",
+  "Everyone leans in together, foreheads almost touching, sharing the moment"
+];
+
+const selected = interactions[Math.floor(Math.random() * interactions.length)];
+return [{ json: { interaction: selected } }];
+```
+
+### Testing Checklist
+
+- [ ] All figures interact with each other (not just Picasso)
+- [ ] Physical contact present between multiple parties
+- [ ] No isolated/observer figures standing apart
+- [ ] Visitor faces match source exactly (no drift)
+- [ ] Picasso matches source exactly
+- [ ] Energy is ecstatic reunion, not formal greeting
+- [ ] Group hugs, embraces, playful gestures present
+
+### Future Enhancement: User-Directed Interaction
+
+Phase 2 option: Allow users to submit interaction preferences with their photo:
+
+| Input | Effect |
+|-------|--------|
+| User provides "dancing together" | Injected into video prompt |
+| User provides nothing | Random selection from curated list |
 
 ---
 

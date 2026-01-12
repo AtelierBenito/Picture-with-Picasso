@@ -1,6 +1,6 @@
-# Interactive Audio Pipeline Design Document
+# Picture with Picasso - User Experience Design Document
 
-**Version:** v1.0-2026-01-10
+**Version:** v4.0-2026-01-11
 **Document Type:** Architecture Design
 **Status:** Approved for Implementation
 **Related:** Audio Pipeline v3.1, ElevenLabs Integration, Lip Sync Analysis
@@ -12,6 +12,7 @@
 This document defines the complete Interactive Audio Pipeline for Picture with Picasso, enabling:
 
 - **User text input** via Telegram/web form
+- **User-directed interaction** for video generation (optional)
 - **Face recognition** to identify the owner (BENIT) vs other visitors
 - **Dynamic script generation** using Grok AI
 - **Content moderation** to prevent inappropriate content
@@ -133,8 +134,13 @@ This document defines the complete Interactive Audio Pipeline for Picture with P
 | Field | Type | Required | Max Length | Description |
 |-------|------|----------|------------|-------------|
 | `photo` | File/URL | Yes | 10MB | Visitor photo |
-| `message` | String | No | 280 chars | User's words for Picasso |
+| `interaction` | String | No | 100 chars | How to interact in video (e.g., "dancing", "group hug") |
+| `message` | String | No | 280 chars | User's words for Picasso (for audio/dialogue) |
 | `name` | String | No | 50 chars | How Picasso addresses them |
+
+**Field Purposes:**
+- `interaction` → Affects **VIDEO** generation (Kling O1 prompt)
+- `message` → Affects **AUDIO** generation (Grok script → ElevenLabs)
 
 ### 2.2 Telegram Bot Configuration
 
@@ -152,9 +158,36 @@ This document defines the complete Interactive Audio Pipeline for Picture with P
     "photo": [
       { "file_id": "AgACAgIAAxk...", "width": 1280, "height": 720 }
     ],
-    "caption": "Tell me about cubism, maestro!"  // User's message
+    "caption": "/interaction: dancing together\nTell me about cubism, maestro!"
   }
 }
+```
+
+**Caption Parsing:**
+
+Users can include interaction directive in their caption:
+```
+/interaction: group hug
+Tell me about your art, maestro!
+```
+
+**Parsing Logic (Code Node):**
+```javascript
+const caption = $json.message?.caption || "";
+
+// Extract interaction directive
+const interactionMatch = caption.match(/\/interaction:\s*(.+?)(?:\n|$)/i);
+const interaction = interactionMatch ? interactionMatch[1].trim() : null;
+
+// Remove directive from message (rest goes to audio script)
+const message = caption.replace(/\/interaction:\s*.+?(?:\n|$)/i, "").trim();
+
+return [{
+  json: {
+    interaction: interaction,  // For video prompt
+    message: message || null   // For audio script
+  }
+}];
 ```
 
 ### 2.3 Web Form Structure
@@ -162,21 +195,89 @@ This document defines the complete Interactive Audio Pipeline for Picture with P
 ```html
 <form action="/api/picasso" method="POST" enctype="multipart/form-data">
   <input type="file" name="photo" accept="image/*" required />
-  <input type="text" name="name" placeholder="Your name (optional)" maxlength="50" />
-  <textarea name="message" placeholder="Say something to Picasso..." maxlength="280"></textarea>
+
+  <input type="text" name="name"
+         placeholder="Your name (optional)"
+         maxlength="50" />
+
+  <!-- VIDEO interaction -->
+  <input type="text" name="interaction"
+         placeholder="How should you interact? (e.g., 'group hug', 'dancing')"
+         maxlength="100" />
+
+  <!-- AUDIO dialogue -->
+  <textarea name="message"
+            placeholder="Say something to Picasso... (for dialogue)"
+            maxlength="280"></textarea>
+
   <button type="submit">Create My Picture with Picasso</button>
 </form>
 ```
 
 ### 2.4 Input Scenarios
 
-| Scenario | photo | message | name | Result |
-|----------|-------|---------|------|--------|
-| Minimal | Yes | - | - | Spontaneous Picasso greeting |
-| With message | Yes | "Hello!" | - | Picasso responds to greeting |
-| With topic | Yes | "Tell me about art" | - | Picasso discusses art |
-| Full input | Yes | "I love your work" | "Maria" | "Ah, Maria! You are too kind..." |
-| BENIT detected | Yes | Any | - | Personal reunion + your voice |
+| Scenario | photo | interaction | message | name | Video Result | Audio Result |
+|----------|-------|-------------|---------|------|--------------|--------------|
+| Minimal | Yes | - | - | - | Random interaction | Spontaneous greeting |
+| With interaction | Yes | "dancing" | - | - | Dancing together | Spontaneous greeting |
+| With message | Yes | - | "Hello!" | - | Random interaction | Responds to greeting |
+| Full input | Yes | "group hug" | "I love your work" | "Maria" | Group hug | "Ah, Maria! You are too kind..." |
+| BENIT detected | Yes | "toasting" | Any | - | Toasting together | Personal reunion + your voice |
+
+### 2.5 Interaction Resolution
+
+User-provided interactions are enhanced and injected into the video prompt. If no interaction is provided, a random selection from a curated list is used.
+
+**Resolution Logic (Code Node):**
+
+```javascript
+// Code Node: Resolve Interaction
+const userInteraction = $json.interaction?.trim();
+
+// Curated fallback list for random selection
+const defaultInteractions = [
+  "The whole group collapses into a spontaneous group hug, arms wrapping around everyone",
+  "Friends grab each other by the shoulders in disbelief, laughing and pulling closer",
+  "Everyone reaches for everyone—hands clasping, backs being patted, pure joy",
+  "The group clusters together, arms around each other's shoulders, beaming",
+  "Friends playfully shove each other while laughing, then pull into embraces",
+  "Picasso pulls two visitors in while they reach for each other—triangle of warmth",
+  "The reunion erupts—hugging, hand-holding, joyful chaos between all friends",
+  "Everyone leans in together, foreheads almost touching, sharing the moment"
+];
+
+let resolvedInteraction;
+
+if (userInteraction && userInteraction.length > 0) {
+  // User provided interaction - enhance it with reunion energy
+  resolvedInteraction = `${userInteraction} - with the energy of great friends reuniting after years apart`;
+} else {
+  // Random selection from curated list
+  resolvedInteraction = defaultInteractions[Math.floor(Math.random() * defaultInteractions.length)];
+}
+
+return [{
+  json: {
+    ...$json,
+    resolvedInteraction: resolvedInteraction
+  }
+}];
+```
+
+**Injection into Kling O1 Prompt:**
+
+The `resolvedInteraction` is inserted into the GROUP REUNION section:
+
+```
+GROUP REUNION – THE HEART OF THIS VIDEO:
+Everyone in this frame—@Element1 (visitors) and @Element2 (Picasso)—are great
+friends who haven't seen each other in years. This is the surprise reunion.
+They are ecstatic. They can't believe it.
+
+{{ $json.resolvedInteraction }}
+
+Physical contact between ALL parties is REQUIRED...
+```
 
 ---
 
@@ -591,44 +692,60 @@ Final:   Mixed audio         [████████████████�
 
 ### 8.1 New Node Sequence
 
-Insert these nodes BEFORE the existing Kling O1 submission:
+Insert these nodes into the existing workflow:
 
 ```
 [Existing: Webhook Trigger]
         │
         ▼
-[NEW: Content Moderation - Input]
-        │
-        ├── If flagged → [Reject Response]
+[NEW: Parse Input] ─────────────────────────────────────┐
+  (Telegram: parse caption for /interaction directive)  │
+  (Form: extract interaction field)                     │
+        │                                               │
+        ▼                                               │
+[NEW: Content Moderation - Input]                       │
+  (Check message AND interaction for inappropriate)     │
+        │                                               │
+        ├── If flagged → [Reject Response]              │
+        │                                               │
+        ▼                                               │
+[NEW: Face Detection (Azure)]                           │
+        │                                               │
+        ▼                                               │
+[NEW: Face Identification (Azure)]                      │
+        │                                               │
+        ▼                                               │
+[NEW: Script Generation (Grok)]                         │
+  (Uses: message, name, isBenit for AUDIO script)       │
+        │                                               │
+        ▼                                               │
+[NEW: Content Moderation - Output]                      │
+        │                                               │
+        ├── If flagged → [Regenerate Script]            │
+        │                                               │
+        ▼                                               │
+[NEW: Voice Assignment]                                 │
+        │                                               │
+        ▼                                               │
+[NEW: Picasso TTS (ElevenLabs)]                         │
+        │                                               │
+        ▼                                               │
+[NEW: Visitor TTS (ElevenLabs)] (conditional)           │
+        │                                               │
+        ▼                                               │
+[NEW: Ambient Sound (ElevenLabs)]                       │
+        │                                               │
+        ▼                                               │
+[NEW: Audio Mixer]                                      │
+        │                                               │
+        ▼                                               │
+[NEW: Resolve Interaction] ◄────────────────────────────┘
+  (Uses: interaction field for VIDEO prompt)
+  (If blank → random from curated list)
         │
         ▼
-[NEW: Face Detection (Azure)]
-        │
-        ▼
-[NEW: Face Identification (Azure)]
-        │
-        ▼
-[NEW: Script Generation (Grok)]
-        │
-        ▼
-[NEW: Content Moderation - Output]
-        │
-        ├── If flagged → [Regenerate Script]
-        │
-        ▼
-[NEW: Voice Assignment]
-        │
-        ▼
-[NEW: Picasso TTS (ElevenLabs)]
-        │
-        ▼
-[NEW: Visitor TTS (ElevenLabs)] (conditional)
-        │
-        ▼
-[NEW: Ambient Sound (ElevenLabs)]
-        │
-        ▼
-[NEW: Audio Mixer]
+[MODIFIED: Prepare Kling Elements]
+  (Injects {{ $json.resolvedInteraction }} into prompt)
         │
         ▼
 [Existing: Kling O1 Submit]
@@ -649,16 +766,54 @@ Insert these nodes BEFORE the existing Kling O1 submission:
 [Existing: Delivery]
 ```
 
-### 8.2 Total New Nodes: ~15
+### 8.2 Total New Nodes: ~17
 
 | Node Group | Count | Purpose |
 |------------|-------|---------|
+| Input Processing | 2 | Parse input + resolve interaction |
 | Input Moderation | 2 | Check + branch |
 | Face Recognition | 3 | Detect + identify + process |
 | Script Generation | 3 | Generate + moderate + branch |
 | Audio Generation | 4 | Picasso + visitor + ambient + mix |
 | Lip Sync | 3 | Submit + poll + process |
-| **Total** | **~15** | |
+| **Total** | **~17** | |
+
+### 8.3 Interaction Flow Detail
+
+```
+                    ┌─────────────────────────────────────┐
+                    │           USER INPUT                │
+                    ├─────────────────────────────────────┤
+                    │  photo (required)                   │
+                    │  interaction (optional) → VIDEO     │
+                    │  message (optional) → AUDIO         │
+                    │  name (optional) → AUDIO            │
+                    └───────────────┬─────────────────────┘
+                                    │
+                    ┌───────────────┼───────────────┐
+                    │               │               │
+                    ▼               ▼               ▼
+              ┌──────────┐   ┌──────────┐   ┌──────────┐
+              │ AUDIO    │   │ VIDEO    │   │ LIP SYNC │
+              │ PIPELINE │   │ PIPELINE │   │ PIPELINE │
+              ├──────────┤   ├──────────┤   ├──────────┤
+              │ message  │   │interaction│   │ Combines │
+              │ name     │   │    ↓     │   │ audio +  │
+              │ isBenit  │   │ Resolve  │   │ video    │
+              │    ↓     │   │    ↓     │   │          │
+              │ Grok AI  │   │ Kling O1 │   │LatentSync│
+              │    ↓     │   │ Prompt   │   │          │
+              │ElevenLabs│   │          │   │          │
+              └────┬─────┘   └────┬─────┘   └────┬─────┘
+                   │              │              │
+                   └──────────────┴──────────────┘
+                                  │
+                                  ▼
+                          ┌──────────────┐
+                          │ FINAL VIDEO  │
+                          │ with audio   │
+                          └──────────────┘
+```
 
 ---
 
@@ -703,9 +858,10 @@ Insert these nodes BEFORE the existing Kling O1 submission:
 - Conditional voice assignment
 
 ### Phase 2C: User Input + AI Script (2-3 hours)
-- Telegram/web form input
-- Content moderation
-- Grok script generation
+- Telegram/web form input parsing
+- User-directed interaction (video prompt injection)
+- Content moderation (message + interaction)
+- Grok script generation (audio)
 - Dynamic personalization
 
 ### Phase 2D: Polish (1-2 hours)
@@ -744,9 +900,31 @@ Insert these nodes BEFORE the existing Kling O1 submission:
 
 | Date | Version | Changes |
 |------|---------|---------|
-| 2026-01-10 | 1.0 | Initial comprehensive design |
+| 2026-01-11 | 4.0 | Major revision: renamed to User Experience, added user-directed interaction |
+| 2026-01-10 | 1.0 | Initial comprehensive design (as Interactive Audio Pipeline) |
+
+### v4.0 Changes (2026-01-11)
+
+**New Feature: User-Directed Interaction**
+
+Added ability for users to specify how they interact with Picasso in the video:
+
+| Addition | Section | Description |
+|----------|---------|-------------|
+| `interaction` field | 2.1 | New optional input field (100 chars) |
+| Caption parsing | 2.2 | `/interaction:` directive for Telegram |
+| Form field | 2.3 | New input field for web form |
+| Scenarios table | 2.4 | Updated with interaction examples |
+| Resolution logic | 2.5 | New section with Code node implementation |
+| Workflow nodes | 8.1-8.3 | Parse Input + Resolve Interaction nodes |
+
+**How It Works:**
+- User provides interaction (e.g., "dancing", "group hug") → injected into video prompt
+- User provides nothing → random selection from curated list
+- Separate from `message` field which affects audio/dialogue
 
 ---
 
 *Document created: 2026-01-10*
+*Renamed to User Experience v4.0: 2026-01-11*
 *Architecture research completed with: Firecrawl, Sequential Thinking, OpenRouter, Azure, OpenAI documentation*
